@@ -1,0 +1,39 @@
+name: Generer et publier les histoires
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # toutes les 6 heures
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run generator
+        env:
+          BRAND_NAME: "TonNomDeMarque"
+          CTA_LINK: "https://TON_LIEN_DE_PAIEMENT_ICI"   # ← colle ton lien SumUp ou Gumroad ici
+          STORIES_PER_RUN: "5"        # ← augmente pour plus d'histoires par run
+          WORDS_PER_STORY: "800"      # ← longueur moyenne d'une histoire
+          FREEBIES_PER_RUN: "1"       # ← nb d'extraits gratuits publiés
+        run: |
+          python story_generator.py
+
+      - name: Commit & Push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: nouvelles histoires automatiques"
+          branch: ${{ github.ref_name }}
