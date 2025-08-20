@@ -1,6 +1,5 @@
 import os, random, textwrap, datetime, zipfile
 "Et quelque part, un futur possible apprend à sourire."
-)
 
 return "\n\n".join([intro] + body + [twist, outro])
 
